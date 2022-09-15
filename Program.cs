@@ -82,9 +82,9 @@ public class TicTacToe
             bool fail = true;
             while (fail)
             {
-                string input;
+                //string input;
                 Console.WriteLine("1 - Spela igen\n2 - Avsluta\n");
-                input = Console.ReadLine();
+                string? input = Console.ReadLine();
 
                 switch (input)
                 {
@@ -101,7 +101,7 @@ public class TicTacToe
                         fail = true;
                         Console.WriteLine("Ogiltigt val, försök igen.");
                         break;
-                }
+                 }
             }
 
         }
@@ -122,32 +122,34 @@ public class TicTacToe
         do
         {
         Console.Write($"Spelare {playerNo}, ange var du vill placera ditt {marker} (t.ex. A2): ");
-        string input = Console.ReadLine();
+        string? input = Console.ReadLine();
         char tmp = char.ToUpper(input[0]);
         string tmp2 = Convert.ToString(input[1]);
         int[] move = new int[2];
-        if ((coordinates.TryGetValue(tmp, out move[0])) && (int.TryParse(tmp2, out move[1])))
-        {
-                if (Board[move[0], move[1]].Equals("   "))
+            if ((coordinates.TryGetValue(tmp, out move[0])) && (int.TryParse(tmp2, out move[1])))
                 {
-                    Board[move[0], move[1]] = marker;
-                    //ritar ut markören på spelplanen
-                    counter += 1;
-                    PrintBoard();
-                    hasWon = HasWon(marker, move);
-                    fail = false;
+                        if (Board[move[0], move[1]].Equals("   "))
+                        {
+                            Board[move[0], move[1]] = marker;
+                            //ritar ut markören på spelplanen
+                            counter += 1;
+                            PrintBoard();
+                            hasWon = HasWon(marker, move);
+                            fail = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Välj en position som inte redan är tagen. Försök igen.");
+                            fail = true;
+                        }
                 }
-                else
-                {
-                    Console.WriteLine("Välj en position som inte redan är tagen. Försök igen.");
-                    fail = true;
-                }
-        }
-        else
-        {
-            Console.WriteLine("Ange koordinater i rätt format. Försök igen.");
-                fail = true;
-        }
+                    else
+                    {
+                        Console.WriteLine("Ange koordinater i rätt format. Försök igen.");
+                        fail = true;
+                    }
+                
+               
         } while (fail);
 
         if (hasWon)
@@ -163,6 +165,7 @@ public class TicTacToe
         return false;
 
     }
+    
 
     private bool HasWon(string marker, int[] c)
     {
@@ -191,7 +194,6 @@ public class TicTacToe
                     default:
                         return false;
                 }
-                break;
             case 2:
                 switch (c[1])
                 {
@@ -218,7 +220,6 @@ public class TicTacToe
                 }
             default:
                 return false;
-                break;
         }
 
     }
