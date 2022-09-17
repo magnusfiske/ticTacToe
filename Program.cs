@@ -9,6 +9,7 @@ public class TicTacToe
     public TicTacToe()
     {
         Console.WriteLine("Luffarschack - tre i rad vinner!\n");
+        SetBoard();
         PrintBoard();
         Play();
     }
@@ -28,16 +29,87 @@ public class TicTacToe
 
 
     public string[,] Board
-    { get => board;
-        private set { }
+    {
+        get { return board; }
+        set { board = value; }
     }
 
+    void SetBoard()
+    {
+        var frame = new Dictionary<char, int>()
+        {
+            {'*', 0},
+            {'A', 1},
+            {'B', 2},
+            {'C', 3},
+            {'D', 4},
+            {'E', 5},
+            {'F', 6},
+            {'G', 7},
+            {'H', 8},
+            {'I', 9},
+            {'J', 10}
+
+        };
+
+        int num = 0;
+        bool fail = false;
+        bool isNum;
+        do
+        {
+            Console.WriteLine("Ange hur stor spelplan du vill ha genom att ange en siffra som representerar\n antal rutor per sida (t.ex. '5' ger en spelplan som är 5x5 rutor)\nMax 10 rutor.");
+            string? input = Console.ReadLine();
+            if (string.IsNullOrEmpty(input))
+            {
+                fail = true;
+                Console.WriteLine("Felaktig inmatning. Försök igen.");
+            }
+            else
+            {
+                isNum = int.TryParse(input, out num);
+                if (!isNum || num > 10)
+                {
+                    Console.WriteLine("Felaktig inmatning. Försök igen.");
+                    fail = true;
+                }
+            }
+
+        } while (fail);
+
+        Board = new string[num + 2, num + 2];
+
+        for (int row = 0; row < Board.GetLength(0); row++)
+        {
+            for (int col = 0; col < Board.GetLength(1); col++)
+            {
+                //switch först, sen nestade if för att kombinera.
+
+                if (col == 0 && row == 0)
+                    Board.SetValue(" * ", row, col);
+                else if (col == 0 && row < Board.GetLength(0) - 1)
+                {
+                    char tmp = frame.ElementAt(row).Key;
+                    Board.SetValue($" {tmp} ", row, col);
+                }
+                else if (row == 0 && col < Board.GetLength(1) - 1)
+                {
+                    Board.SetValue($" {col} ", row, col);
+                }
+                else if (row == Board.GetLength(0) -1 || col == Board.GetLength(1) - 1)
+                {
+                    Board.SetValue(" * ", row, col);
+                }
+                else
+                    Board.SetValue("   ", row, col);
+            }
+        }
+    }
     
     private void Refresh()
     {
-        for (int row = 1; row < 4; row++)
+        for (int row = 1; row < (Board.GetLength(0) - 1); row++)
         {
-            for (int col = 1; col < 4; col++)
+            for (int col = 1; col < (Board.GetLength(1) - 1); col++)
             {
                 
                 Board.SetValue("   ", row, col);
@@ -91,6 +163,8 @@ public class TicTacToe
                     case "1":
                         fail = false;
                         Refresh();
+                        counter = 0;
+                        SetBoard();
                         PrintBoard();
                         Play();
                         break;
@@ -116,7 +190,15 @@ public class TicTacToe
         {
             {'A', 1},
             {'B', 2},
-            {'C', 3}
+            {'C', 3},
+            {'D', 4},
+            {'E', 5},
+            {'F', 6},
+            {'G', 7},
+            {'H', 8},
+            {'I', 9},
+            {'J', 10}
+
         };
 
         do
@@ -134,7 +216,7 @@ public class TicTacToe
                             //ritar ut markören på spelplanen
                             counter += 1;
                             PrintBoard();
-                            hasWon = HasWon(marker, move);
+                            hasWon = HasWon(marker);
                             fail = false;
                         }
                         else
@@ -165,8 +247,8 @@ public class TicTacToe
         return false;
 
     }
-    
 
+    /*
     private bool HasWon(string marker, int[] c)
     {
         string topLeft = Board[1, 1];
@@ -222,6 +304,37 @@ public class TicTacToe
                 return false;
         }
 
+    }*/
+    private bool HasWon(string marker)
+    {
+        for (int row = 0; row < board.GetLength(0); row++)
+            for (int col = 0; col < (board.GetLength(1) - 2); col++)
+            {
+                if (board[row, col].Equals(marker) && board[row, col + 1].Equals(marker) && board[row, col + 2].Equals(marker))
+                    return true;
+            }
+
+        for (int row = 0; row < (board.GetLength(0) - 2); row++)
+            for (int col = 0; col < board.GetLength(1); col++)
+            {
+                if (board[row, col].Equals(marker) && board[row + 1, col].Equals(marker) && board[row + 2, col].Equals(marker))
+                    return true;
+            }
+
+        for (int row = 0; row < (board.GetLength(0) - 2); row++)
+            for (int col = 0; col < (board.GetLength(1) - 2); col++)
+            {
+                if (board[row, col].Equals(marker) && board[row + 1, col + 1].Equals(marker) && board[row + 2, col + 2].Equals(marker))
+                    return true;
+            }
+
+        for (int row = 0; row < (board.GetLength(0) - 2); row++)
+            for (int col = (board.GetLength(1) - 1); col > 1; col--)
+            {
+                if (board[row, col].Equals(marker) && board[row + 1, col - 1].Equals(marker) && board[row + 2, col - 2].Equals(marker))
+                    return true;
+            }
+        return false;
     }
 
 }
